@@ -1,0 +1,237 @@
+/* ── 서체: AG 최정호 민부리 Std ──
+   서체 파일은 웹에 올리지 않고(구독 라이선스), 화면의 글자는 js/outline.js가 같은 서체의 외곽선(SVG)으로 바꿔 넣음.
+   아래 font-family는 외곽선 데이터가 없는 글자에만 쓰임(설치돼 있으면 AG, 없으면 기본 고딕) */
+svg.ol { display: inline-block; overflow: visible; fill: currentColor; }
+
+/* ── 토큰 (Figma 변수: Background #ffffff / Foreground #000000) ── */
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+  --invert: 0;            /* 어두운 톤에서 SVG 아이콘을 흰색으로 */
+  --tone-speed: 700ms;    /* 글자·아이콘 흑백 전환 시간 */
+  --ease-out: cubic-bezier(.215, .61, .355, 1);     /* power2.out */
+  --ease-in-out: cubic-bezier(.455, .03, .515, .955); /* power2.inOut */
+  --scale: 1;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "AG Choijeongho Minburi Std", sans-serif;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  transition: color var(--tone-speed) var(--ease-in-out);   /* 배경은 js에서 프레임마다 연속 적용 */
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ── 1920 × 1080 아트보드를 화면에 맞춰 축소/확대 ── */
+.viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform: translate(-50%, -50%) scale(var(--scale));
+  transform-origin: 50% 50%;
+}
+body:not(.is-ready) .stage { visibility: hidden; }
+
+/* ── 히어로 ── */
+.hero, .hero > div { position: absolute; inset: 0; }
+.hero-line, .hero-dot, .hero-word {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform, opacity;
+}
+.hero-line { background: currentColor; transform-origin: 50% 50%; }
+.hero-dot { width: 10px; height: 10px; background: currentColor; }
+.hero-word {
+  margin: 0;
+  font-size: 22px;
+  line-height: normal;
+  letter-spacing: -0.03em;     /* -0.66px @22px, -0.6px @20px */
+  white-space: pre;
+}
+.hero-copy--en .hero-word { font-weight: 500; }  /* Medium */
+.hero-copy--kr .hero-word { font-weight: 400; }  /* Regular */
+
+/* ── 헤더 ── */
+.header { position: absolute; inset: 0; pointer-events: none; }
+.header > * { pointer-events: auto; }
+.header p, .nav a {
+  font-size: 12px;
+  line-height: normal;
+  white-space: nowrap;
+}
+.credit { position: absolute; left: 40px; top: 20px; margin: 0; }
+/* 로고 + 메뉴 묶음: 로고(857,20)에서 메뉴(1041, 20/42/64)까지 이어지는 호버 영역 */
+.brand { position: absolute; left: 857px; top: 20px; width: 240px; height: 62px; }
+.logo { position: absolute; left: 0; top: 0; width: 106px; height: 61.249px; display: block; }
+.logo img { display: block; width: 106px; height: 61.249px; }
+.logo:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+
+.nav a {
+  position: absolute;
+  left: 184px;                       /* 1041 - 857 */
+  color: inherit;
+  text-decoration: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-8px);
+  transition: opacity 280ms ease, transform 380ms cubic-bezier(.22,.66,.29,1), visibility 0s linear 380ms;
+}
+.nav a:nth-child(1) { top: 0; }
+.nav a:nth-child(2) { top: 22px; }
+.nav a:nth-child(3) { top: 44px; }
+.brand.is-open .nav a {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 280ms ease, transform 380ms cubic-bezier(.22,.66,.29,1), visibility 0s;
+}
+.brand.is-open .nav a:nth-child(2) { transition-delay: 60ms; }
+.brand.is-open .nav a:nth-child(3) { transition-delay: 120ms; }
+.nav a:hover, .nav a:focus-visible { text-decoration: underline; text-underline-offset: 2px; outline: none; }
+
+/* 호버가 없는 기기(터치)는 메뉴를 항상 표시 */
+@media (hover: none) {
+  .nav a { opacity: 1; visibility: visible; transform: none; }
+}
+
+/* ── 커스텀 마우스 포인터 (마우스·트랙패드에서만) ──
+   기본: 히어로의 네모 점 · 링크 위: 오른쪽 위 삼각형 아이콘과 같은 직각삼각형으로 변형,
+   겹친 글자·로고는 색이 반전되어 비쳐 보임 (mix-blend-mode: difference) */
+.cursor, .cursor-line, .cursor-trail { display: none; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .cursor-trail {
+    display: block;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99;                      /* 커서 바로 아래 */
+    pointer-events: none;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  html.has-cursor, html.has-cursor * { cursor: none !important; }
+  .cursor, .cursor-line {
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;            /* 도형의 중심 = 포인터 위치 */
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform;
+    transition:
+      opacity 200ms ease,
+      width 360ms var(--ease-out), height 360ms var(--ease-out),
+      margin 360ms var(--ease-out);
+  }
+  .cursor.is-visible { opacity: 1; }
+
+  /* 채움: 네모 ↔ 삼각형을 같은 4점 polygon으로 모핑 */
+  .cursor-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--foreground);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transition: clip-path 360ms var(--ease-out), background-color var(--tone-speed) var(--ease-in-out), border-radius 360ms var(--ease-out);
+  }
+
+  /* 링크·로고 위: 삼각형 + 겹친 부분만 색 반전 */
+  .cursor.is-link, .cursor-line.is-link { width: 30px; height: 30px; margin: -15px 0 0 -15px; }
+  .cursor.is-link { mix-blend-mode: difference; }
+  .cursor.is-link .cursor-fill {
+    background: #ffffff;                /* difference: 흰 배경 위 → 검정, 검정 글자 위 → 흰색 */
+    clip-path: polygon(100% 0, 100% 0, 100% 100%, 0 100%);
+  }
+  /* 중간 회색 배경에서도 삼각형 모양이 보이도록 얇은 외곽선 (반전 없이 글자색) */
+  .cursor-line { overflow: visible; fill: none; stroke: var(--foreground); stroke-width: 1px; }
+  .cursor-line polygon { vector-effect: non-scaling-stroke; }
+  .cursor-line.is-link.is-visible { opacity: 1; }
+
+  /* 삼각형 톤 컨트롤 위: 작은 점으로 줄여 톤 점이 잘 보이게 */
+  .cursor.is-tone { width: 4px; height: 4px; margin: -2px 0 0 -2px; }
+  .cursor.is-down:not(.is-link):not(.is-detail) { width: 6px; height: 6px; margin: -3px 0 0 -3px; }
+  .cursor.is-down.is-link, .cursor-line.is-down.is-link { width: 24px; height: 24px; margin: -12px 0 0 -12px; }
+}
+
+/* 프로젝트 위: 네모 → 흰 원(80px)으로 커지고 ↗ 화살표와 Detail 글자가 나타남 */
+.cursor-arrow, .cursor-label { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .cursor-arrow, .cursor-label { display: block; position: absolute; pointer-events: none; opacity: 0; }
+  .cursor-arrow {
+    left: 50%; top: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px;
+    fill: none; stroke: #111; stroke-width: 1.2px;
+    transform: translate(-6px, 6px) scale(.6);
+    transition: opacity 200ms ease, transform 300ms var(--ease-out);
+  }
+  .cursor-label {
+    left: 50%; top: calc(100% + 12px);
+    font-size: 14px; line-height: 1; letter-spacing: .02em; white-space: nowrap;
+    color: #fff; text-shadow: 0 0 10px rgba(0, 0, 0, .28);
+    transform: translate(-50%, -6px);
+    transition: opacity 200ms ease, transform 300ms var(--ease-out);
+  }
+  .cursor.is-detail {
+    width: 80px; height: 80px; margin: -40px 0 0 -40px;
+    transition: opacity 200ms ease, width 520ms var(--ease-out), height 520ms var(--ease-out), margin 520ms var(--ease-out);
+  }
+  .cursor.is-detail .cursor-fill { background: #fff; border-radius: 50%; transition: background-color 300ms ease, border-radius 520ms var(--ease-out); }
+  .cursor.is-detail .cursor-arrow { opacity: 1; transform: none; transition: opacity 300ms ease 150ms, transform 600ms var(--ease-out) 150ms; }
+  .cursor.is-detail .cursor-label { opacity: 1; transform: translate(-50%, 0); transition: opacity 300ms ease 220ms, transform 600ms var(--ease-out) 220ms; }
+  .cursor.is-detail-dark .cursor-fill { background: var(--foreground); }
+  .cursor.is-detail-dark .cursor-arrow { stroke: var(--background); }
+  .cursor.is-detail-dark .cursor-label { color: var(--foreground); text-shadow: none; }
+  .cursor.is-detail.is-down { width: 70px; height: 70px; margin: -35px 0 0 -35px; }
+}
+
+/* 검정 SVG를 어두운 톤에서 흰색으로 */
+.icon { filter: invert(var(--invert)); transition: filter var(--tone-speed) var(--ease-in-out); }
+
+/* ── 삼각형 톤 컨트롤 ── */
+.tone {
+  position: absolute; left: 1824px; top: 23px; width: 56px; height: 56px;
+  transform-origin: 100% 0;              /* 오른쪽 위 꼭짓점 기준으로 커짐 */
+  transition: transform 400ms var(--ease-out);
+}
+.tone.is-hover { transform: scale(1.15); }
+/* Figma: rotate(180°) + scaleY(-1) = 좌우 반전 */
+.tone-triangle { position: absolute; inset: 0; transform: scaleX(-1); }
+.tone-triangle img { position: absolute; left: 0; top: 0; width: 54.575px; height: 56px; display: block; }
+.tone { touch-action: none; cursor: crosshair; outline: none; }
+.tone > * { pointer-events: none; }
+.tone:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+/* 점 하나: position-01.svg를 포인터 위치로 translate */
+.tone-mark { position: absolute; left: 0; top: 0; width: 56px; height: 56px; will-change: transform; }
+.tone-mark img {
+  display: block; width: 56px; height: 56px;
+  transform-origin: 50px 9px;            /* 원 중심 */
+  transition: transform 400ms var(--ease-out);
+}
+.tone.is-hover .tone-mark img { transform: scale(1.5); }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --tone-speed: 1ms; }
+}
