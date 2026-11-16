@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yoonjeong Cho — Portfolio 2026</title>
+  <meta name="description" content="I explore where different ideas meet to see familiar problems differently. 서로 다른 생각이 만나는 지점을 찾아 익숙한 문제를 새로운 각도에서 바라봅니다.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-tone="1">
+  <main class="viewport">
+    <!-- Figma 291:2 · HERO Motion 01 · 흩어진 단어 (1920 × 1080 기준) -->
+    <section class="stage" id="stage" aria-label="Hero">
+      <h1 class="sr-only">I explore where different ideas meet to see familiar problems differently. 서로 다른 생각이 만나는 지점을 찾아 익숙한 문제를 새로운 각도에서 바라봅니다.</h1>
+
+      <!-- 히어로: 삼각형 선 · 점 · 카피 (js/hero.js가 채움) -->
+      <div class="hero" id="hero" aria-hidden="true">
+        <div class="hero-lines" id="hero-lines"></div>
+        <div class="hero-dots" id="hero-dots"></div>
+        <div class="hero-copy hero-copy--en" id="hero-en"></div>
+        <div class="hero-copy hero-copy--kr" id="hero-kr"></div>
+      </div>
+
+      <!-- 헤더 (Figma 291:6) -->
+      <header class="header">
+        <p class="credit">©<br>2026</p>
+        <!-- 로고에 호버하면 오른쪽에 HOME · WORK · ABOUT 표시 -->
+        <div class="brand" id="brand">
+          <a class="logo" id="logo" href="#" aria-label="yun jeong Cho — 메뉴 열기" aria-controls="nav" aria-expanded="false">
+            <img class="icon" src="assets/logo-union.svg" width="106" height="61.249" alt="">
+          </a>
+          <nav class="nav" id="nav" aria-label="주요 메뉴">
+            <a href="#" aria-current="page">HOME</a>
+            <a href="work.html">WORK</a>
+            <a href="#about">ABOUT</a>
+          </nav>
+        </div>
+
+        <!-- 삼각형 톤 컨트롤 (Figma 357:137 · HERO / Triangle tone) -->
+        <div class="tone" id="tone" role="slider" tabindex="0" aria-label="배경 밝기 (삼각형 위에서 포인터를 움직이세요)" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span class="tone-triangle icon" aria-hidden="true"><img src="assets/triangle-icon.svg" width="54.575" height="56" alt=""></span>
+          <span class="tone-mark icon" id="tone-mark" aria-hidden="true"><img src="assets/tone/position-01.svg" width="56" height="56" alt=""></span>
+        </div>
+      </header>
+    </section>
+  </main>
+
+  <!-- 커스텀 마우스 포인터: 히어로의 네모 점과 같은 모양 -->
+  <!-- 커서 궤적: 움직임에 따라 짧은 선과 작은 네모 점이 남았다 사라짐 -->
+  <canvas class="cursor-trail" id="cursor-trail" aria-hidden="true"></canvas>
+  <!-- 링크 위에서는 삼각형으로 바뀌고, 겹친 글자만 색이 반전됨 -->
+  <div class="cursor" id="cursor" aria-hidden="true"><span class="cursor-fill"></span></div>
+  <svg class="cursor-line" id="cursor-line" viewBox="0 0 30 30" aria-hidden="true"><polygon points="29.5,0.5 29.5,29.5 0.5,29.5" /></svg>
+
+  <script src="js/outline-data.js"></script>
+  <script src="js/outline.js"></script>
+  <script src="js/hero-data.js"></script>
+  <script src="js/hero.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
