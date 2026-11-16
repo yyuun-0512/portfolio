@@ -1,0 +1,38 @@
+/* ── 프로젝트 상세 (임시) ──
+   카드(377×532, x960)에서 들어오면 사진이 오른쪽으로 넓어지며(920px) 이어지는 느낌 */
+.project-page .brand { left: 40px; top: 509px; }
+.project { position: absolute; left: 960px; top: 297px; width: 920px; font-size: 16px; line-height: 21px; }
+.project .mask { display: block; overflow: hidden; height: 21px; }
+.project .line { display: block; transform: translateY(100%); transition: transform 1s cubic-bezier(.87, 0, .13, 1); }
+.is-shown .project .line { transform: none; }
+
+.project-label { position: relative; height: 56px; }
+.project-label::before { content: ""; position: absolute; left: 0; top: 0; width: 4px; height: 4px; background: currentColor; }
+.project-label .no { position: absolute; left: 4px; top: 0; }
+.project-label .title { position: absolute; left: 54px; top: 2px; margin: 0; font: inherit; }
+
+.project-visual {
+  position: relative; width: 920px; height: 532px; overflow: hidden; background: #d9d9d9;
+  clip-path: inset(0 543px 0 0);                  /* 처음엔 카드 폭(377px) */
+  transition: clip-path 1.2s cubic-bezier(.87, 0, .13, 1) .1s;
+}
+.is-shown .project-visual { clip-path: inset(0 0 0 0); }
+.project-visual .pic { position: absolute; inset: 0; background: #d9d9d9; }
+.project-visual .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.project-meta { position: relative; height: 21px; margin-top: 16px; white-space: nowrap; }
+.project-meta > * { position: absolute; top: 0; }
+.project-meta .no { left: 4px; }
+.project-meta .title { left: 54px; }
+.project-meta a { color: inherit; text-decoration: none; }
+.project-back { right: 120px; }
+.project-next { right: 0; }
+.project-meta a:hover .line, .project-meta a:focus-visible .line { text-decoration: underline; text-underline-offset: 3px; }
+.is-shown .project-meta .title .line { transition-delay: .06s; }
+.is-shown .project-back .line { transition-delay: .3s; }
+.is-shown .project-next .line { transition-delay: .36s; }
+
+.stage.is-leaving .project { opacity: 0; transition: opacity .45s var(--fade-out); }
+@media (prefers-reduced-motion: reduce) {
+  .project .line, .project-visual { transition: none !important; }
+}
